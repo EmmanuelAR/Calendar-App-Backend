@@ -1,1 +1,20 @@
-console.log("Hola mundo");
+const express = require("express");
+require("dotenv").config();
+
+// * Crear servidor de express
+const app = express();
+
+//* Directorio publico
+app.use(express.static("public"));
+
+// * Rutas
+// app.get("/", (req, res) => {
+//   res.json({
+//     ok: true,
+//   });
+// });
+
+// * Escuchar peticiones
+app.listen(process.env.PORT, () => {
+  console.log(`Servidor corriendo en ${4000}`);
+});
