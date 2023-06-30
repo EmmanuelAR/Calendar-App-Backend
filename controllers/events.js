@@ -36,17 +36,80 @@ const createEvent = async (req, res = response) => {
 };
 
 const updateEvent = async (req, res = response) => {
-  res.json({
-    ok: true,
-    msg: "updateEvent",
-  });
+  const eventoId = req.params.id;
+  const uid = req.uid;
+  try {
+    const evento = await Evento.findById(eventoId);
+    if (!evento) {
+      return res.status(404).json({
+        ok: false,
+        msg: "Evento no existe.",
+      });
+    }
+
+    if (evento.user.toString() !== uid) {
+      return res.status(401).json({
+        ok: false,
+        msg: "Solo se puede actulizar eventos propios.",
+      });
+    }
+
+    const eventoNuevo = {
+      ...req.body,
+      user: uid,
+    };
+
+    const eventoActualizado = await Evento.findByIdAndUpdate(
+      eventoId,
+      eventoNuevo,
+      { new: true }
+    );
+
+    res.json({
+      ok: true,
+      evento: eventoActualizado,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      ok: false,
+      msg: "Por favor hable con el administrador",
+    });
+  }
 };
 
 const deleteEvent = async (req, res = response) => {
-  res.json({
-    ok: true,
-    msg: "deleteEvent",
-  });
+  const eventoId = req.params.id;
+  const uid = req.uid;
+  try {
+    const evento = await Evento.findById(eventoId);
+    if (!evento) {
+      return res.status(404).json({
+        ok: false,
+        msg: "Evento no existe.",
+      });
+    }
+
+    if (evento.user.toString() !== uid) {
+      return res.status(401).json({
+        ok: false,
+        msg: "Solo se puede actualizar eventos propios.",
+      });
+    }
+
+    await Evento.findByIdAndDelete(eventoId);
+
+    res.json({
+      ok: true,
+      msg: "Evento eliminado con exito.",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      ok: false,
+      msg: "Por favor hable con el administrador",
+    });
+  }
 };
 
 module.exports = {
