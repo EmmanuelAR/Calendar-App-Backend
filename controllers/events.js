@@ -6,7 +6,7 @@ const getEvents = async (req, res = response) => {
     const eventos = await Evento.find().populate("user", "name");
     res.json({
       ok: true,
-      msg: eventos,
+      eventos,
     });
   } catch (error) {
     console.log(error);
